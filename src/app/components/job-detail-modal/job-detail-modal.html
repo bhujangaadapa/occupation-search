@@ -1,0 +1,276 @@
+<div class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+  <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[92vh] flex flex-col">
+    
+    <!-- Top Header -->
+    <div class="p-6 bg-slate-850 border-b border-slate-800 relative">
+      <button 
+        (click)="close.emit()" 
+        class="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pr-10">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">{{ job.company }}</span>
+            <span class="text-slate-600">•</span>
+            <span class="text-xs text-slate-400">{{ job.location }}</span>
+            <span class="text-slate-600">•</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-medium">{{ job.workplaceType }}</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-white">{{ job.title }}</h2>
+          <div class="mt-2 flex flex-wrap items-center gap-2">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-emerald-950/60 text-emerald-300 border border-emerald-800/60">
+              {{ job.salaryRange }}
+            </span>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-indigo-950/60 text-indigo-300 border border-indigo-800/60">
+              {{ job.category }}
+            </span>
+            <span class="text-xs text-slate-400">
+              Posted: {{ job.postedDate }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Match Score Circle / Card -->
+        <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex items-center sm:flex-col justify-between sm:justify-center gap-2 min-w-[120px]">
+          <span class="text-xs text-slate-400 font-medium">Your Match</span>
+          <div class="text-2xl font-black text-cyan-400">{{ job.matchScore }}%</div>
+          <span class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Fit Score</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs inside Modal -->
+      <div class="flex items-center gap-2 mt-6 border-b border-slate-800 -mb-6 pb-2 text-xs font-medium overflow-x-auto">
+        <button
+          (click)="activeTab = 'overview'"
+          [class]="activeTab === 'overview' ? 'text-cyan-400 border-b-2 border-cyan-400 pb-2 font-bold' : 'text-slate-400 hover:text-white pb-2'"
+        >
+          Job Overview
+        </button>
+        <button
+          (click)="activeTab = 'match_analysis'"
+          [class]="activeTab === 'match_analysis' ? 'text-cyan-400 border-b-2 border-cyan-400 pb-2 font-bold' : 'text-slate-400 hover:text-white pb-2'"
+        >
+          AI Match Breakdown
+        </button>
+        <button
+          (click)="activeTab = 'talking_points'"
+          [class]="activeTab === 'talking_points' ? 'text-cyan-400 border-b-2 border-cyan-400 pb-2 font-bold' : 'text-slate-400 hover:text-white pb-2'"
+        >
+          Resume & Interview Pitch
+        </button>
+        <button
+          (click)="activeTab = 'tracker'"
+          [class]="activeTab === 'tracker' ? 'text-cyan-400 border-b-2 border-cyan-400 pb-2 font-bold' : 'text-slate-400 hover:text-white pb-2'"
+        >
+          Application Tracker
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable Modal Body -->
+    <div class="p-6 overflow-y-auto space-y-6 text-slate-300 text-sm">
+
+      <!-- TAB 1: OVERVIEW -->
+      <div *ngIf="activeTab === 'overview'" class="space-y-6">
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Role Description</h4>
+          <p class="text-slate-300 leading-relaxed text-sm bg-slate-950/40 p-4 rounded-xl border border-slate-800/80">
+            {{ job.description }}
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Key Responsibilities</h4>
+          <ul class="space-y-2">
+            <li *ngFor="let resp of job.responsibilities" class="flex items-start gap-2.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
+              <span class="text-sm text-slate-300">{{ resp }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Required Core Skills</h4>
+          <div class="flex flex-wrap gap-2">
+            <span 
+              *ngFor="let s of job.requiredSkills"
+              class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-cyan-300 border border-slate-700"
+            >
+              {{ s }}
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="job.preferredSkills && job.preferredSkills.length > 0">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Preferred / Bonus Skills</h4>
+          <div class="flex flex-wrap gap-2">
+            <span 
+              *ngFor="let s of job.preferredSkills"
+              class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800/50 text-slate-400 border border-slate-700/50"
+            >
+              {{ s }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: AI MATCH BREAKDOWN -->
+      <div *ngIf="activeTab === 'match_analysis'" class="space-y-6">
+        <!-- Strategic Hybrid Synergy Box -->
+        <div class="bg-gradient-to-r from-cyan-950/40 via-indigo-950/40 to-slate-900 p-5 rounded-2xl border border-cyan-500/30">
+          <div class="flex items-center gap-2 text-cyan-300 text-xs font-bold uppercase tracking-wider mb-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Why Your LS-DYNA + OMSA + AI Combo Wins Here
+          </div>
+          <p class="text-sm text-slate-200 leading-relaxed font-normal">
+            {{ job.hybridAdvantage }}
+          </p>
+        </div>
+
+        <!-- Matched Skills -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Skills You Match ({{ job.matchedSkills?.length || 0 }})
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div 
+              *ngFor="let s of job.matchedSkills" 
+              class="bg-emerald-950/30 border border-emerald-800/40 p-2.5 rounded-xl flex items-center justify-between text-xs"
+            >
+              <span class="font-medium text-emerald-200">{{ s }}</span>
+              <span class="text-[10px] font-bold text-emerald-400 uppercase">Strong Match</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Missing / Growth Skills -->
+        <div *ngIf="job.missingSkills && job.missingSkills.length > 0">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2 flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            Skills to Touch Upon or Frame ({{ job.missingSkills.length }})
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div 
+              *ngFor="let s of job.missingSkills" 
+              class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl flex items-center justify-between text-xs"
+            >
+              <span class="text-slate-400">{{ s }}</span>
+              <span class="text-[10px] text-slate-500">Bridge with OMSA / Python</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: RESUME & INTERVIEW TALKING POINTS -->
+      <div *ngIf="activeTab === 'talking_points'" class="space-y-6">
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-2">
+            Tailored Resume Bullets & Interview Talking Points
+          </h4>
+          <p class="text-xs text-slate-400 mb-4">
+            Copy and adapt these targeted bullet points directly into your resume or use them during hiring manager interviews.
+          </p>
+
+          <div class="space-y-3">
+            <div 
+              *ngFor="let point of job.resumeTalkingPoints; let idx = index"
+              class="bg-slate-950 p-4 rounded-xl border border-slate-800/80 flex items-start justify-between gap-4 group"
+            >
+              <div class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                • {{ point }}
+              </div>
+              <button 
+                (click)="copyToClipboard(point, idx)"
+                class="shrink-0 px-2.5 py-1 text-xs rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1"
+              >
+                <span>{{ copiedIndex === idx ? 'Copied!' : 'Copy' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: APPLICATION TRACKER -->
+      <div *ngIf="activeTab === 'tracker'" class="space-y-6">
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Application Pipeline Stage</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            <button
+              *ngFor="let st of stages"
+              (click)="setStage(st)"
+              [class]="currentApplication?.stage === st 
+                ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-400' 
+                : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'"
+              class="py-2 px-3 rounded-xl border text-xs font-medium transition text-center"
+            >
+              {{ st }}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Personal Notes / Recruiter Contact</label>
+          <textarea 
+            [(ngModel)]="userNotes"
+            rows="3"
+            placeholder="e.g. Applied via referral on LinkedIn; Hiring manager praised OMSA analytics coursework; Interview scheduled for Friday..."
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500"
+          ></textarea>
+          <button 
+            (click)="saveNotes()"
+            class="mt-2 px-4 py-1.5 rounded-lg text-xs font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 transition"
+          >
+            Save Notes
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="p-4 sm:p-6 bg-slate-850 border-t border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <button 
+          (click)="setStage(currentApplication ? currentApplication.stage : 'Wishlist')"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 transition"
+        >
+          {{ currentApplication ? 'Status: ' + currentApplication.stage : 'Save to Tracker' }}
+        </button>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button 
+          (click)="close.emit()" 
+          class="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white"
+        >
+          Close
+        </button>
+
+        <a 
+          [href]="job.applyUrl" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="px-5 py-2 text-xs font-bold text-slate-950 bg-gradient-to-r from-cyan-400 to-indigo-400 hover:opacity-90 rounded-xl shadow-lg shadow-cyan-500/20 transition flex items-center gap-1.5"
+        >
+          <span>Apply on Company Site</span>
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>

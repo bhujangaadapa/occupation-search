@@ -1,0 +1,224 @@
+<div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-cyan-500 selection:text-slate-950">
+  
+  <!-- Navigation Header -->
+  <app-navbar 
+    (viewChange)="currentView = $event"
+    (openFirebaseModal)="isFirebaseModalOpen = true"
+  ></app-navbar>
+
+  <!-- Main View Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- VIEW 1: EXPLORE ROLES -->
+    <div *ngIf="currentView === 'jobs'" class="space-y-6 animate-in fade-in duration-200">
+      
+      <!-- Hero Header & Search Bar -->
+      <div class="bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-3xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-semibold mb-3">
+            <span>🎯 Tailored for Crash Safety, LS-DYNA, Georgia Tech OMSA & AI</span>
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight">
+            High-Impact Engineering Roles Matched to Your Skills
+          </h1>
+          <p class="mt-2 text-sm sm:text-base text-slate-300">
+            Real-time job matching across automotive OEMs, aerospace pioneers, and AI simulation labs. Every match score is calculated against your personalized skill matrix.
+          </p>
+
+          <!-- Search Input -->
+          <div class="mt-6 relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input 
+              type="text"
+              [ngModel]="jobService.searchQuery()"
+              (ngModelChange)="jobService.searchQuery.set($event)"
+              placeholder="Search by title, company (Tesla, Apple, Waymo, Rivian), skill (LS-DYNA, PINNs, OMSA)..."
+              class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl pl-12 pr-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 shadow-inner"
+            />
+          </div>
+
+          <!-- Quick Skill Tag Filters -->
+          <div class="mt-4 flex flex-wrap items-center gap-2">
+            <span class="text-xs text-slate-400 font-semibold mr-1">Filter by Skill:</span>
+            <button
+              *ngFor="let tag of quickSkillTags"
+              (click)="toggleSkillTag(tag)"
+              [class]="isSkillTagSelected(tag) 
+                ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-400 shadow-sm' 
+                : 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 border-slate-700/80'"
+              class="px-2.5 py-1 text-xs rounded-lg border transition flex items-center gap-1"
+            >
+              <span>{{ tag }}</span>
+              <span *ngIf="isSkillTagSelected(tag)" class="text-xs font-bold">✕</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Row -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- Category Dropdown / Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            *ngFor="let cat of categories"
+            (click)="jobService.selectedCategory.set(cat)"
+            [class]="jobService.selectedCategory() === cat 
+              ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40 font-bold' 
+              : 'text-slate-400 hover:text-white border-transparent'"
+            class="px-3 py-1.5 rounded-lg border text-xs font-medium transition"
+          >
+            {{ cat }}
+          </button>
+        </div>
+
+        <!-- Workplace & Experience & Min Score -->
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Workplace -->
+          <select 
+            [ngModel]="jobService.selectedWorkplace()"
+            (ngModelChange)="jobService.selectedWorkplace.set($event)"
+            class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-cyan-500"
+          >
+            <option value="All">All Locations</option>
+            <option value="Remote">Remote</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="On-site">On-site</option>
+          </select>
+
+          <!-- Experience -->
+          <select 
+            [ngModel]="jobService.selectedExperience()"
+            (ngModelChange)="jobService.selectedExperience.set($event)"
+            class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-cyan-500"
+          >
+            <option value="All">All Experience</option>
+            <option value="Entry">Entry Level</option>
+            <option value="Mid-Level">Mid-Level</option>
+            <option value="Senior">Senior</option>
+            <option value="Staff/Principal">Staff / Principal</option>
+          </select>
+
+          <!-- Sort -->
+          <select 
+            [ngModel]="jobService.sortBy()"
+            (ngModelChange)="jobService.sortBy.set($event)"
+            class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-cyan-500"
+          >
+            <option value="match">Sort: Highest Match Score</option>
+            <option value="salary">Sort: Top Salary</option>
+            <option value="recent">Sort: Most Recent</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Results Stats Bar -->
+      <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+        <div>
+          Showing <span class="text-cyan-400 font-bold">{{ jobService.filteredJobs().length }}</span> matched positions
+          <span *ngIf="jobService.selectedSkillTags().length > 0">
+            matching skills: [{{ jobService.selectedSkillTags().join(', ') }}]
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span>Min Match:</span>
+          <input 
+            type="range" 
+            min="0" 
+            max="90" 
+            step="10" 
+            [ngModel]="jobService.minMatchScore()" 
+            (ngModelChange)="jobService.minMatchScore.set($event)"
+            class="w-20 accent-cyan-400"
+          />
+          <span class="font-bold text-cyan-400">{{ jobService.minMatchScore() }}%+</span>
+        </div>
+      </div>
+
+      <!-- Job Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <app-job-card
+          *ngFor="let job of jobService.filteredJobs()"
+          [job]="job"
+          (viewDetails)="openJobModal($event)"
+        ></app-job-card>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="jobService.filteredJobs().length === 0" class="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center space-y-3">
+        <div class="w-12 h-12 rounded-xl bg-slate-800 text-slate-500 mx-auto flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-base font-bold text-white">No roles matched the current filters</h3>
+        <p class="text-xs text-slate-400 max-w-sm mx-auto">
+          Try clearing some skill tags, lowering the minimum match score slider, or searching for other keywords.
+        </p>
+        <button
+          (click)="jobService.searchQuery.set(''); jobService.selectedCategory.set('All'); jobService.selectedSkillTags.set([]); jobService.minMatchScore.set(0)"
+          class="px-4 py-2 text-xs font-semibold rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 transition"
+        >
+          Reset All Filters
+        </button>
+      </div>
+
+    </div>
+
+    <!-- VIEW 2: SKILLS MATRIX -->
+    <div *ngIf="currentView === 'skills'">
+      <app-skills-profile></app-skills-profile>
+    </div>
+
+    <!-- VIEW 3: JOB SCANNER / ANALYZER -->
+    <div *ngIf="currentView === 'analyzer'">
+      <app-custom-job-analyzer (viewSavedJob)="openJobModal($event)"></app-custom-job-analyzer>
+    </div>
+
+    <!-- VIEW 4: APPLICATION TRACKER -->
+    <div *ngIf="currentView === 'applications'">
+      <app-applications-tracker (viewJob)="openJobModal($event)"></app-applications-tracker>
+    </div>
+
+  </main>
+
+  <!-- MODALS -->
+  <app-job-detail-modal
+    *ngIf="selectedJobForModal"
+    [job]="selectedJobForModal"
+    (close)="closeJobModal()"
+  ></app-job-detail-modal>
+
+  <app-firebase-settings-modal
+    *ngIf="isFirebaseModalOpen"
+    (close)="isFirebaseModalOpen = false"
+  ></app-firebase-settings-modal>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-slate-800/80 py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+        <span class="font-semibold text-slate-300">DynaSim CareerAI</span>
+        <span>• Angular 22 & Firebase App</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-500">
+        <span>Vercel Deployment Ready</span>
+        <span>•</span>
+        <span>Crash Safety & LS-DYNA</span>
+        <span>•</span>
+        <span>Georgia Tech OMSA Analytics</span>
+        <span>•</span>
+        <span>Physics AI</span>
+      </div>
+    </div>
+  </footer>
+
+</div>

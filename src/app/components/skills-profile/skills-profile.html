@@ -1,0 +1,306 @@
+<div class="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-200">
+  
+  <!-- Banner / Strategic Value Prop -->
+  <div class="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+    <div class="absolute -right-12 -top-12 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute right-32 -bottom-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-3xl relative z-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-semibold mb-3">
+        <span>⚡ Hybrid Profile Advantage</span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+        The Dual Moat: Physical Mechanics meets Advanced Analytics & AI
+      </h1>
+      <p class="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
+        Engineers proficient in <span class="text-cyan-400 font-semibold">LS-DYNA dynamic crash simulation</span> understand the real non-linear physics of structural deformation. When paired with <span class="text-indigo-400 font-semibold">Georgia Tech OMSA analytics</span> and modern <span class="text-fuchsia-400 font-semibold">AI/PINN surrogate modeling</span>, you unlock opportunities that pure software developers and traditional FEA analysts cannot touch.
+      </p>
+      
+      <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <div class="text-lg font-bold text-cyan-400">LS-DYNA</div>
+          <div class="text-xs text-slate-400">Explicit Crash & Impact</div>
+        </div>
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <div class="text-lg font-bold text-indigo-400">OMSA</div>
+          <div class="text-xs text-slate-400">Optimization & Statistics</div>
+        </div>
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <div class="text-lg font-bold text-fuchsia-400">Physics AI</div>
+          <div class="text-xs text-slate-400">Surrogates, PINNs & ROMs</div>
+        </div>
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <div class="text-lg font-bold text-emerald-400">Top 1%</div>
+          <div class="text-xs text-slate-400">Candidate Differentiation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skill Matrix Sections -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Category 1: LS-DYNA -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center font-bold text-xs">
+            FEA
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-white">{{ getCategoryLabel('ls_dyna') }}</h2>
+            <p class="text-xs text-slate-400">Non-linear materials, contacts, impact dynamics</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 space-y-4">
+        <div *ngFor="let skill of getCategorySkills('ls_dyna')" class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-semibold text-white">{{ skill.name }}</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-md"
+              [ngClass]="{
+                'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20': skill.level === 4,
+                'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20': skill.level === 3,
+                'bg-blue-500/10 text-blue-300 border border-blue-500/20': skill.level === 2,
+                'bg-slate-700/30 text-slate-300': skill.level === 1
+              }"
+            >
+              {{ getLevelLabel(skill.level) }}
+            </span>
+          </div>
+
+          <!-- Level Buttons -->
+          <div class="grid grid-cols-4 gap-1.5 pt-1">
+            <button 
+              *ngFor="let lvl of [1, 2, 3, 4]" 
+              (click)="setLevel(skill.skillId, lvl)"
+              [class]="skill.level >= lvl 
+                ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300 font-semibold' 
+                : 'bg-slate-800/50 border-slate-700/50 text-slate-500 hover:text-slate-300'"
+              class="py-1 text-[11px] rounded border transition text-center"
+            >
+              {{ getLevelLabel(lvl) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 2: Crash Safety -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center font-bold text-xs">
+            SAFE
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-white">{{ getCategoryLabel('crash_safety') }}</h2>
+            <p class="text-xs text-slate-400">FMVSS, NCAP, occupant kinematics, crashworthiness</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 space-y-4">
+        <div *ngFor="let skill of getCategorySkills('crash_safety')" class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-semibold text-white">{{ skill.name }}</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-md"
+              [ngClass]="{
+                'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20': skill.level === 4,
+                'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20': skill.level === 3,
+                'bg-blue-500/10 text-blue-300 border border-blue-500/20': skill.level === 2,
+                'bg-slate-700/30 text-slate-300': skill.level === 1
+              }"
+            >
+              {{ getLevelLabel(skill.level) }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1.5 pt-1">
+            <button 
+              *ngFor="let lvl of [1, 2, 3, 4]" 
+              (click)="setLevel(skill.skillId, lvl)"
+              [class]="skill.level >= lvl 
+                ? 'bg-rose-500/20 border-rose-500/40 text-rose-300 font-semibold' 
+                : 'bg-slate-800/50 border-slate-700/50 text-slate-500 hover:text-slate-300'"
+              class="py-1 text-[11px] rounded border transition text-center"
+            >
+              {{ getLevelLabel(lvl) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 3: OMSA Analytics -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center font-bold text-xs">
+            GT
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-white">{{ getCategoryLabel('omsa_analytics') }}</h2>
+            <p class="text-xs text-slate-400">Georgia Tech Analytics, Optimization, Python/Pandas</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 space-y-4">
+        <div *ngFor="let skill of getCategorySkills('omsa_analytics')" class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-semibold text-white">{{ skill.name }}</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-md"
+              [ngClass]="{
+                'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20': skill.level === 4,
+                'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20': skill.level === 3,
+                'bg-blue-500/10 text-blue-300 border border-blue-500/20': skill.level === 2,
+                'bg-slate-700/30 text-slate-300': skill.level === 1
+              }"
+            >
+              {{ getLevelLabel(skill.level) }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1.5 pt-1">
+            <button 
+              *ngFor="let lvl of [1, 2, 3, 4]" 
+              (click)="setLevel(skill.skillId, lvl)"
+              [class]="skill.level >= lvl 
+                ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300 font-semibold' 
+                : 'bg-slate-800/50 border-slate-700/50 text-slate-500 hover:text-slate-300'"
+              class="py-1 text-[11px] rounded border transition text-center"
+            >
+              {{ getLevelLabel(lvl) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 4: AI & Deep Learning -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20 flex items-center justify-center font-bold text-xs">
+            AI
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-white">{{ getCategoryLabel('ai_ml') }}</h2>
+            <p class="text-xs text-slate-400">Physics-Informed ML, PyTorch, Surrogates, ROMs</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 space-y-4">
+        <div *ngFor="let skill of getCategorySkills('ai_ml')" class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-semibold text-white">{{ skill.name }}</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-md"
+              [ngClass]="{
+                'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20': skill.level === 4,
+                'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20': skill.level === 3,
+                'bg-blue-500/10 text-blue-300 border border-blue-500/20': skill.level === 2,
+                'bg-slate-700/30 text-slate-300': skill.level === 1
+              }"
+            >
+              {{ getLevelLabel(skill.level) }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1.5 pt-1">
+            <button 
+              *ngFor="let lvl of [1, 2, 3, 4]" 
+              (click)="setLevel(skill.skillId, lvl)"
+              [class]="skill.level >= lvl 
+                ? 'bg-fuchsia-500/20 border-fuchsia-500/40 text-fuchsia-300 font-semibold' 
+                : 'bg-slate-800/50 border-slate-700/50 text-slate-500 hover:text-slate-300'"
+              class="py-1 text-[11px] rounded border transition text-center"
+            >
+              {{ getLevelLabel(lvl) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 5: Tooling & HPC -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg lg:col-span-2">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-xs">
+            HPC
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-white">{{ getCategoryLabel('engineering_tools') }}</h2>
+            <p class="text-xs text-slate-400">HyperMesh, ANSA, Primer, D3PLOT, Linux clusters</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div *ngFor="let skill of getCategorySkills('engineering_tools')" class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-semibold text-white">{{ skill.name }}</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-md"
+              [ngClass]="{
+                'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20': skill.level === 4,
+                'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20': skill.level === 3,
+                'bg-blue-500/10 text-blue-300 border border-blue-500/20': skill.level === 2,
+                'bg-slate-700/30 text-slate-300': skill.level === 1
+              }"
+            >
+              {{ getLevelLabel(skill.level) }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1.5 pt-1">
+            <button 
+              *ngFor="let lvl of [1, 2, 3, 4]" 
+              (click)="setLevel(skill.skillId, lvl)"
+              [class]="skill.level >= lvl 
+                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 font-semibold' 
+                : 'bg-slate-800/50 border-slate-700/50 text-slate-500 hover:text-slate-300'"
+              class="py-1 text-[11px] rounded border transition text-center"
+            >
+              {{ getLevelLabel(lvl) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Add Custom Skill Bar -->
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+    <h3 class="text-sm font-bold text-white mb-3">Add Custom Engineering or Data Skill</h3>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <input 
+        type="text" 
+        [(ngModel)]="newSkillName" 
+        placeholder="e.g. Abaqus Explicit, Gurobi, Graph Neural Networks..."
+        class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500"
+      />
+      <select 
+        [(ngModel)]="newSkillCategory"
+        class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-cyan-500"
+      >
+        <option value="ls_dyna">LS-DYNA & FEA</option>
+        <option value="crash_safety">Crash Safety</option>
+        <option value="omsa_analytics">OMSA Analytics</option>
+        <option value="ai_ml">AI & ML</option>
+        <option value="engineering_tools">Tools & HPC</option>
+      </select>
+      <button 
+        (click)="addCustomSkill()"
+        [disabled]="!newSkillName.trim()"
+        class="px-5 py-2 text-xs font-semibold rounded-lg bg-cyan-500 text-slate-950 hover:bg-cyan-400 disabled:opacity-50 transition"
+      >
+        + Add Skill
+      </button>
+    </div>
+  </div>
+
+</div>
