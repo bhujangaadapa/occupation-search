@@ -14,10 +14,7 @@
 
     <div class="flex items-center gap-3">
       <div class="px-3.5 py-2 rounded-xl border bg-slate-950 border-slate-800 text-xs text-slate-400">
-        Sync Status: 
-        <span [class]="firebaseService.isConnected() ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'">
-          {{ firebaseService.isConnected() ? 'Cloud Firestore' : 'Local Storage' }}
-        </span>
+        Storage: <span class="text-emerald-400 font-bold">Fast Local Persistence</span>
       </div>
     </div>
   </div>

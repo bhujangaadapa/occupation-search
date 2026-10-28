@@ -49,12 +49,3 @@ export interface ApplicationTrackerItem {
   matchScore: number;
   updatedAt: string;
 }
-
-export interface FirebaseConfigOptions {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string;
-}

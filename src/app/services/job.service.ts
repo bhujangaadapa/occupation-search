@@ -1,19 +1,16 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApplicationStage, ApplicationTrackerItem, JobPosting, UserSkillProficiency } from '../models/job.model';
-import { DEFAULT_USER_SKILLS, SAMPLE_JOBS } from '../data/sample-jobs';
-import { FirebaseService } from './firebase.service';
-
-const STORAGE_KEY_USER_SKILLS = 'occupation_search_user_skills';
-const STORAGE_KEY_CUSTOM_JOBS = 'occupation_search_custom_jobs';
+import { SAMPLE_JOBS } from '../data/sample-jobs';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class JobService {
-  private firebaseService = inject(FirebaseService);
+  private storageService = inject(StorageService);
 
   // User Skills
-  public userSkills = signal<UserSkillProficiency[]>(this.loadUserSkills());
+  public userSkills = signal<UserSkillProficiency[]>(this.storageService.loadUserSkills());
 
   // Jobs
   public allJobs = signal<JobPosting[]>(this.loadInitialJobs());
@@ -28,50 +25,22 @@ export class JobService {
   public sortBy = signal<'match' | 'salary' | 'recent'>('match');
 
   // Applications
-  public applications = signal<ApplicationTrackerItem[]>([]);
+  public applications = signal<ApplicationTrackerItem[]>(this.storageService.loadApplications());
   public selectedJob = signal<JobPosting | null>(null);
 
-  constructor() {
-    this.refreshApplications();
-  }
-
-  private loadUserSkills(): UserSkillProficiency[] {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_USER_SKILLS);
-      return saved ? JSON.parse(saved) : DEFAULT_USER_SKILLS;
-    } catch {
-      return DEFAULT_USER_SKILLS;
-    }
+  private loadInitialJobs(): JobPosting[] {
+    const customJobs = this.storageService.loadCustomJobs();
+    return [...customJobs, ...SAMPLE_JOBS];
   }
 
   public saveUserSkills(skills: UserSkillProficiency[]) {
     this.userSkills.set(skills);
-    try {
-      localStorage.setItem(STORAGE_KEY_USER_SKILLS, JSON.stringify(skills));
-    } catch (e) {
-      console.error(e);
-    }
+    this.storageService.saveUserSkills(skills);
   }
 
   public updateSkillLevel(skillId: string, level: number) {
     const updated = this.userSkills().map((s) => (s.skillId === skillId ? { ...s, level } : s));
     this.saveUserSkills(updated);
-  }
-
-  private loadInitialJobs(): JobPosting[] {
-    let customJobs: JobPosting[] = [];
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_CUSTOM_JOBS);
-      if (saved) customJobs = JSON.parse(saved);
-    } catch (e) {
-      console.warn(e);
-    }
-    return [...customJobs, ...SAMPLE_JOBS];
-  }
-
-  public async refreshApplications() {
-    const apps = await this.firebaseService.getApplications();
-    this.applications.set(apps);
   }
 
   // Calculate Match Score for a job given current user skills
@@ -97,7 +66,6 @@ export class JobService {
       const userLevel = this.findMatchingUserLevel(req, userSkillMap);
       if (userLevel > 0) {
         matched.push(req);
-        // Level 1: 50%, Level 2: 75%, Level 3: 95%, Level 4: 100%
         const multiplier = userLevel === 4 ? 1.0 : userLevel === 3 ? 0.95 : userLevel === 2 ? 0.75 : 0.5;
         earnedWeight += 3 * multiplier;
       } else {
@@ -118,7 +86,7 @@ export class JobService {
       }
     }
 
-    // Hybrid Bonus calculation: if user has both LS-DYNA/Crash safety AND OMSA/AI skills
+    // Hybrid Bonus: combining Crash Safety/FEA with OMSA Analytics/AI
     const hasCrash = userSkillsList.some(
       (s) => (s.category === 'ls_dyna' || s.category === 'crash_safety') && s.level >= 3
     );
@@ -244,7 +212,6 @@ export class JobService {
         if (sort === 'salary') {
           return this.extractMaxSalary(b.salaryRange) - this.extractMaxSalary(a.salaryRange);
         }
-        // recent
         return 0;
       });
   });
@@ -359,25 +326,31 @@ export class JobService {
     const updated = [job, ...current];
     this.allJobs.set(updated);
 
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_CUSTOM_JOBS);
-      const customList = saved ? JSON.parse(saved) : [];
-      customList.unshift(job);
-      localStorage.setItem(STORAGE_KEY_CUSTOM_JOBS, JSON.stringify(customList));
-    } catch (e) {
-      console.warn(e);
-    }
+    const saved = this.storageService.loadCustomJobs();
+    this.storageService.saveCustomJobs([job, ...saved]);
   }
 
   // Application tracker operations
-  public async setJobApplicationStage(job: JobPosting, stage: ApplicationStage, notes?: string) {
+  public setJobApplicationStage(job: JobPosting, stage: ApplicationStage, notes?: string) {
     const match = this.calculateJobMatch(job, this.userSkills());
-    const existing = this.applications().find((a) => a.jobId === job.id);
+    const existing = this.applications();
+    const foundIdx = existing.findIndex((a) => a.jobId === job.id);
 
-    if (existing) {
-      await this.firebaseService.updateApplicationStatus(existing.id, stage, notes);
+    let updatedList: ApplicationTrackerItem[];
+    if (foundIdx !== -1) {
+      updatedList = existing.map((a, i) =>
+        i === foundIdx
+          ? {
+              ...a,
+              stage,
+              notes: notes !== undefined ? notes : a.notes,
+              updatedAt: new Date().toISOString()
+            }
+          : a
+      );
     } else {
-      await this.firebaseService.saveApplication({
+      const newItem: ApplicationTrackerItem = {
+        id: 'app-' + Date.now(),
         jobId: job.id,
         jobTitle: job.title,
         company: job.company,
@@ -386,14 +359,17 @@ export class JobService {
         notes: notes || '',
         salary: job.salaryRange,
         updatedAt: new Date().toISOString()
-      });
+      };
+      updatedList = [newItem, ...existing];
     }
 
-    await this.refreshApplications();
+    this.applications.set(updatedList);
+    this.storageService.saveApplications(updatedList);
   }
 
-  public async removeApplication(id: string) {
-    await this.firebaseService.deleteApplication(id);
-    await this.refreshApplications();
+  public removeApplication(id: string) {
+    const updated = this.applications().filter((a) => a.id !== id);
+    this.applications.set(updated);
+    this.storageService.saveApplications(updated);
   }
 }

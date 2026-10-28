@@ -3,14 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { JobPosting } from './models/job.model';
 import { JobService } from './services/job.service';
-import { FirebaseService } from './services/firebase.service';
 import { NavbarComponent } from './components/navbar/navbar';
 import { JobCardComponent } from './components/job-card/job-card';
 import { JobDetailModalComponent } from './components/job-detail-modal/job-detail-modal';
 import { SkillsProfileComponent } from './components/skills-profile/skills-profile';
 import { CustomJobAnalyzerComponent } from './components/custom-job-analyzer/custom-job-analyzer';
 import { ApplicationsTrackerComponent } from './components/applications-tracker/applications-tracker';
-import { FirebaseSettingsModalComponent } from './components/firebase-settings-modal/firebase-settings-modal';
 
 @Component({
   selector: 'app-root',
@@ -23,19 +21,16 @@ import { FirebaseSettingsModalComponent } from './components/firebase-settings-m
     JobDetailModalComponent,
     SkillsProfileComponent,
     CustomJobAnalyzerComponent,
-    ApplicationsTrackerComponent,
-    FirebaseSettingsModalComponent
+    ApplicationsTrackerComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
   public jobService = inject(JobService);
-  public firebaseService = inject(FirebaseService);
 
   public currentView: 'jobs' | 'skills' | 'analyzer' | 'applications' = 'jobs';
   public selectedJobForModal: JobPosting | null = null;
-  public isFirebaseModalOpen = false;
 
   // Categories & Quick Skill Filter Tags
   public categories: string[] = [

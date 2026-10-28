@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FirebaseService } from '../../services/firebase.service';
 import { JobService } from '../../services/job.service';
 
 @Component({
@@ -10,11 +9,9 @@ import { JobService } from '../../services/job.service';
   templateUrl: './navbar.html'
 })
 export class NavbarComponent {
-  public firebaseService = inject(FirebaseService);
   public jobService = inject(JobService);
 
   @Output() viewChange = new EventEmitter<'jobs' | 'skills' | 'analyzer' | 'applications'>();
-  @Output() openFirebaseModal = new EventEmitter<void>();
 
   public currentView: 'jobs' | 'skills' | 'analyzer' | 'applications' = 'jobs';
 

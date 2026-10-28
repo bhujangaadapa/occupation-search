@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApplicationStage, ApplicationTrackerItem, JobPosting } from '../../models/job.model';
 import { JobService } from '../../services/job.service';
-import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-applications-tracker',
@@ -13,7 +12,6 @@ import { FirebaseService } from '../../services/firebase.service';
 })
 export class ApplicationsTrackerComponent {
   public jobService = inject(JobService);
-  public firebaseService = inject(FirebaseService);
 
   @Output() viewJob = new EventEmitter<JobPosting>();
 
@@ -27,9 +25,6 @@ export class ApplicationsTrackerComponent {
     const job = this.jobService.allJobs().find((j) => j.id === item.jobId);
     if (job) {
       this.jobService.setJobApplicationStage(job, stage, item.notes);
-    } else {
-      this.firebaseService.updateApplicationStatus(item.id, stage, item.notes);
-      this.jobService.refreshApplications();
     }
   }
 

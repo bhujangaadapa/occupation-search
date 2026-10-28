@@ -2,7 +2,7 @@
 
 **Specialized Job Search & Skill-Match Application for Crash Safety, LS-DYNA, Georgia Tech OMSA Analytics, and Physics-AI Engineering Careers.**
 
-Built with **Angular 22**, **Tailwind CSS**, **Firebase Firestore**, and pre-configured for **Vercel** deployment.
+Built with **Angular 22**, **Tailwind CSS**, and pre-configured for **instant zero-config Vercel deployment**.
 
 ---
 
@@ -26,16 +26,12 @@ Candidates who possess both structural finite element mechanics and advanced dat
 - **External Job Description Scanner**: Paste any job description from LinkedIn, Indeed, or OEM portals to instantly extract matching skills, compute fit score, and generate tailored resume bullets.
 - **Interview & Resume Pitch Generator**: For every job, access specific bullet points and a strategic narrative explaining why your dual LS-DYNA + OMSA + AI skillset beats standard applicants.
 - **Applications Pipeline Tracker**: Kanban workflow (Wishlist, Applied, Interviewing, Offer) with notes and salary tracking.
-- **Firebase Firestore + Local Storage Fallback**: Seamless cloud persistence when Firebase is connected, with 100% offline LocalStorage fallback so the app works immediately out of the box.
+- **Zero-Backend / Fast Browser Persistence**: Runs 100% in the browser using LocalStorage with instant load times, zero cost, and zero external backend setup.
 - **Vercel Deployment Ready**: Pre-configured `vercel.json` with SPA routing and build output directory.
 
 ---
 
 ## 🚀 Getting Started
-
-### Prerequisites
-- Node.js (v18 or higher recommended)
-- npm
 
 ### 1. Run Development Server
 ```bash
@@ -69,32 +65,16 @@ The repository includes `vercel.json` preconfigured for Angular SPAs:
 }
 ```
 
-### Option A: Using the Vercel CLI
-```bash
-npm i -g vercel
-vercel
-```
-
-### Option B: Using GitHub / GitLab / Bitbucket
+### Option A: Using GitHub / GitLab
 1. Push this repository to GitHub:
    ```bash
-   git init
-   git add .
-   git commit -m "Initial commit of DynaSim CareerAI Angular Firebase app"
-   git remote add origin <your-repo-url>
-   git push -u origin main
+   git remote add origin https://github.com/<your-username>/occupation-search.git
+   git push -u origin master
    ```
 2. Import the project in [Vercel Dashboard](https://vercel.com/new).
-3. Vercel will automatically read `vercel.json` and deploy.
+3. Click **Deploy**. Vercel will automatically detect `vercel.json` and deploy it instantly.
 
----
-
-## 🔥 Firebase Setup
-
-The app works in **Local Storage Mode** by default with zero configuration needed.
-
-To sync applications and custom jobs to **Firebase Firestore**:
-1. Create a Firebase project in [Firebase Console](https://console.firebase.google.com/).
-2. Enable **Firestore Database** in test or production mode.
-3. Click the **Firebase Pill / Settings** in the app's top navigation bar.
-4. Paste your Web App credentials (`apiKey`, `projectId`, `authDomain`, etc.) and click **Save & Connect**.
+### Option B: Using the Vercel CLI
+```bash
+npx vercel
+```
